@@ -1,0 +1,15 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "scripts": {
+    "compile": "tsc populate-db.ts"
+  },
+  "dependencies": {
+    "@types/mysql": "^2.15.21",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "typescript": "^4.9.5"
+  }
+}
