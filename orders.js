@@ -68,14 +68,16 @@ function populateOrders(customerIds) {
                                 }
                                 var orderInsertQueries = new Array();
                                 var state = ['New', 'Fulfilled'];
+                                var owner = ['lionel.bouzonville@forestadmin.com', 'louis@forestadmin.com', 'steveb@forestadmin.com'];
                                 var _loop_1 = function (i) {
                                     var order = {
                                         number: "3",
                                         total: faker_1.faker.commerce.price(),
-                                        state: state[Math.floor(Math.random() * state.length)],
-                                        customer_id: customerIds[Math.floor(Math.random() * customerIds.length)],
-                                        created_at: faker_1.faker.date.between('2020-01-01T00:00:00.000Z', '2022-01-01T00:00:00.000Z'),
-                                        updated_at: faker_1.faker.date.between('2022-03-01T00:00:00.000Z', '2022-03-01T00:00:00.000Z')
+                                        state: faker_1.faker.helpers.arrayElement(state),
+                                        owner: faker_1.faker.helpers.arrayElement(owner),
+                                        customer_id: faker_1.faker.helpers.arrayElement(customerIds),
+                                        created_at: faker_1.faker.date.recent(60),
+                                        updated_at: faker_1.faker.date.recent(60)
                                     };
                                     var insertOrderQuery = 'INSERT INTO sylius_order SET ?';
                                     var insertOrderPromise = new Promise(function (resolve, reject) {

@@ -7,12 +7,15 @@ import { populatePaymentMethods } from './paymentMethods';
 import { populateShippingMethods } from './shippingMethods';
 import { populateOrders } from './orders';
 import { populateOrderItems } from './orderItems';
+import { populatePayments } from './payments';
+import { populateShippings } from './shippings';
+import { populateCustomerIssues } from './customerIssues';
+import { populateCustomerIssueSupports } from './customerIssueSupports';
 
 import { pool } from './database';
 
 /**
- * TODO
- * - add image to product
+ * @todo
  */
 
 
@@ -36,6 +39,14 @@ import { pool } from './database';
   const orderIds = await populateOrders(customerIds);
   process.stdout.write('.');
   const orderItemIds = await populateOrderItems(productIds, orderIds);
+  process.stdout.write('.');
+  const paymentIds = await populatePayments(orderIds, paymentMethodIds);
+  process.stdout.write('.');
+  const shippingIds = await populateShippings(orderIds, shippingMethodIds);
+  process.stdout.write('.');
+  const customerIssueIds = await populateCustomerIssues(orderIds);
+  process.stdout.write('.');
+  const customerIssueSupportIds = await populateCustomerIssueSupports(customerIssueIds);
   process.stdout.write('.');
 
   pool.end((err) => {

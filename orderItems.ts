@@ -39,8 +39,8 @@ export async function populateOrderItems(productIds: string[], orderIds: string[
                             quantity: 1,
                             unit_price: price,
                             total: price,
-                            product_id: productIds[Math.floor(Math.random() * productIds.length)],
-                            order_id: orderIds[Math.floor(Math.random() * orderIds.length)],
+                            product_id: faker.helpers.arrayElement(productIds),
+                            order_id: faker.helpers.arrayElement(orderIds),
                         };
 
                         const insertOrderItemQuery = 'INSERT INTO sylius_order_item SET ?';

@@ -70,7 +70,7 @@ function populateProductTaxon(productIds, taxonIds) {
                                 var _loop_1 = function (i) {
                                     var productTaxon = {
                                         product_id: productIds[i],
-                                        taxon_id: taxonIds[Math.floor(Math.random() * taxonIds.length)]
+                                        taxon_id: faker_1.faker.helpers.arrayElement(taxonIds)
                                     };
                                     var insertProductTaxonQuery = 'INSERT INTO sylius_product_taxon SET ?';
                                     var insertProductTaxonPromise = new Promise(function (resolve, reject) {

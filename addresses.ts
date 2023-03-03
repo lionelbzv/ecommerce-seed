@@ -5,7 +5,7 @@ faker.setLocale('en_US');
 
 /**
  * Populate sylius_address
- * @param number[]
+ * @param string[]
  * @returns Promise<string[]>
  */
 export async function populateAddresses(customerIds: string[]): Promise<string[]> {
@@ -36,7 +36,7 @@ export async function populateAddresses(customerIds: string[]): Promise<string[]
 
                     for (let i = 0; i < 500; i++) {
                         const address = {
-                            customer_id: customerIds[Math.floor(Math.random() * customerIds.length)],
+                            customer_id: faker.helpers.arrayElement(customerIds),
                             first_name: faker.name.firstName(),
                             last_name: faker.name.lastName(),
                             country_code: faker.address.countryCode(),

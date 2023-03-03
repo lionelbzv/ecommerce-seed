@@ -42,7 +42,7 @@ var faker_1 = require("@faker-js/faker");
 faker_1.faker.setLocale('en_US');
 /**
  * Populate sylius_address
- * @param number[]
+ * @param string[]
  * @returns Promise<string[]>
  */
 function populateAddresses(customerIds) {
@@ -70,7 +70,7 @@ function populateAddresses(customerIds) {
                                 var addressInsertQueries = new Array();
                                 var _loop_1 = function (i) {
                                     var address = {
-                                        customer_id: customerIds[Math.floor(Math.random() * customerIds.length)],
+                                        customer_id: faker_1.faker.helpers.arrayElement(customerIds),
                                         first_name: faker_1.faker.name.firstName(),
                                         last_name: faker_1.faker.name.lastName(),
                                         country_code: faker_1.faker.address.countryCode(),

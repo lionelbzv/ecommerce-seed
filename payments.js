@@ -36,15 +36,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.populateOrderItems = void 0;
+exports.populatePayments = void 0;
 var database_1 = require("./database");
 var faker_1 = require("@faker-js/faker");
 faker_1.faker.setLocale('en_US');
 /**
- * Populate sylius_order_item
+ * Populate sylius_payment
  * @returns Promise<string[]>
  */
-function populateOrderItems(productIds, orderIds) {
+function populatePayments(orderIds, paymentMethodIds) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -53,49 +53,50 @@ function populateOrderItems(productIds, orderIds) {
                             reject(err);
                             return;
                         }
-                        var orderItemIds = new Array();
-                        var deleteQuery = 'DELETE FROM sylius_order_item';
+                        var paymentIds = new Array();
+                        var deleteQuery = 'DELETE FROM sylius_payment';
                         connection.query(deleteQuery, function (error, results, fields) {
                             if (error) {
                                 reject(error);
                                 return;
                             }
-                            var resetQuery = 'ALTER TABLE sylius_order_item AUTO_INCREMENT = 1';
+                            var resetQuery = 'ALTER TABLE sylius_payment AUTO_INCREMENT = 1';
                             connection.query(resetQuery, function (error, results, fields) {
                                 if (error) {
                                     reject(error);
                                     return;
                                 }
-                                var orderItemInsertQueries = new Array();
+                                var paymentInsertQueries = new Array();
+                                var state = ['New', 'Completed'];
                                 var _loop_1 = function (i) {
-                                    var price = faker_1.faker.commerce.price();
-                                    var orderItem = {
-                                        quantity: 1,
-                                        unit_price: price,
-                                        total: price,
-                                        product_id: faker_1.faker.helpers.arrayElement(productIds),
-                                        order_id: faker_1.faker.helpers.arrayElement(orderIds)
+                                    var payment = {
+                                        state: faker_1.faker.helpers.arrayElement(state),
+                                        amount: faker_1.faker.commerce.price(),
+                                        currency_code: 'USD',
+                                        details: faker_1.faker.lorem.text(),
+                                        method_id: faker_1.faker.helpers.arrayElement(paymentMethodIds),
+                                        order_id: orderIds[i]
                                     };
-                                    var insertOrderItemQuery = 'INSERT INTO sylius_order_item SET ?';
-                                    var insertOrderItemPromise = new Promise(function (resolve, reject) {
-                                        connection.query(insertOrderItemQuery, orderItem, function (error, results, fields) {
+                                    var insertPaymentQuery = 'INSERT INTO sylius_payment SET ?';
+                                    var insertPaymentPromise = new Promise(function (resolve, reject) {
+                                        connection.query(insertPaymentQuery, payment, function (error, results, fields) {
                                             if (error) {
                                                 reject(error);
                                                 return;
                                             }
-                                            orderItemIds.push(results.insertId.toString());
+                                            paymentIds.push(results.insertId.toString());
                                             resolve();
                                         });
                                     });
-                                    orderItemInsertQueries.push(insertOrderItemPromise);
+                                    paymentInsertQueries.push(insertPaymentPromise);
                                 };
-                                for (var i = 0; i < 300; i++) {
+                                for (var i = 0; i < 100; i++) {
                                     _loop_1(i);
                                 }
-                                Promise.all(orderItemInsertQueries)
+                                Promise.all(paymentInsertQueries)
                                     .then(function () {
                                     connection.release();
-                                    resolve(orderItemIds);
+                                    resolve(paymentIds);
                                 })["catch"](function (error) {
                                     connection.release();
                                     reject(error);
@@ -107,4 +108,4 @@ function populateOrderItems(productIds, orderIds) {
         });
     });
 }
-exports.populateOrderItems = populateOrderItems;
+exports.populatePayments = populatePayments;

@@ -36,15 +36,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.populateOrderItems = void 0;
+exports.populateCustomerIssueSupports = void 0;
 var database_1 = require("./database");
 var faker_1 = require("@faker-js/faker");
 faker_1.faker.setLocale('en_US');
 /**
- * Populate sylius_order_item
+ * Populate customer_issue_support
+ * @param string[]
  * @returns Promise<string[]>
  */
-function populateOrderItems(productIds, orderIds) {
+function populateCustomerIssueSupports(customerIssueIds) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -53,49 +54,51 @@ function populateOrderItems(productIds, orderIds) {
                             reject(err);
                             return;
                         }
-                        var orderItemIds = new Array();
-                        var deleteQuery = 'DELETE FROM sylius_order_item';
+                        var customerIssueSupportIds = new Array();
+                        var deleteQuery = 'DELETE FROM customer_issue_support';
                         connection.query(deleteQuery, function (error, results, fields) {
                             if (error) {
                                 reject(error);
                                 return;
                             }
-                            var resetQuery = 'ALTER TABLE sylius_order_item AUTO_INCREMENT = 1';
+                            var resetQuery = 'ALTER TABLE customer_issue_support AUTO_INCREMENT = 1';
                             connection.query(resetQuery, function (error, results, fields) {
                                 if (error) {
                                     reject(error);
                                     return;
                                 }
-                                var orderItemInsertQueries = new Array();
+                                var customerIssueSupportInsertQueries = new Array();
+                                var type = ['email', 'phone', 'chat'];
+                                var owner = ['lionel.bouzonville@forestadmin.com', 'louis@forestadmin.com', 'steveb@forestadmin.com', undefined];
                                 var _loop_1 = function (i) {
-                                    var price = faker_1.faker.commerce.price();
-                                    var orderItem = {
-                                        quantity: 1,
-                                        unit_price: price,
-                                        total: price,
-                                        product_id: faker_1.faker.helpers.arrayElement(productIds),
-                                        order_id: faker_1.faker.helpers.arrayElement(orderIds)
+                                    var customerIssueSupport = {
+                                        customer_issue_id: faker_1.faker.helpers.arrayElement(customerIssueIds),
+                                        owner: faker_1.faker.helpers.arrayElement(owner),
+                                        type: faker_1.faker.helpers.arrayElement(type),
+                                        description: faker_1.faker.lorem.text(),
+                                        created_at: faker_1.faker.date.recent(60),
+                                        updated_at: faker_1.faker.date.recent(60)
                                     };
-                                    var insertOrderItemQuery = 'INSERT INTO sylius_order_item SET ?';
-                                    var insertOrderItemPromise = new Promise(function (resolve, reject) {
-                                        connection.query(insertOrderItemQuery, orderItem, function (error, results, fields) {
+                                    var insertCustomerIssueSupportQuery = 'INSERT INTO customer_issue_support SET ?';
+                                    var insertCustomerIssueSupportPromise = new Promise(function (resolve, reject) {
+                                        connection.query(insertCustomerIssueSupportQuery, customerIssueSupport, function (error, results, fields) {
                                             if (error) {
                                                 reject(error);
                                                 return;
                                             }
-                                            orderItemIds.push(results.insertId.toString());
+                                            customerIssueSupportIds.push(results.insertId.toString());
                                             resolve();
                                         });
                                     });
-                                    orderItemInsertQueries.push(insertOrderItemPromise);
+                                    customerIssueSupportInsertQueries.push(insertCustomerIssueSupportPromise);
                                 };
-                                for (var i = 0; i < 300; i++) {
+                                for (var i = 0; i < 200; i++) {
                                     _loop_1(i);
                                 }
-                                Promise.all(orderItemInsertQueries)
+                                Promise.all(customerIssueSupportInsertQueries)
                                     .then(function () {
                                     connection.release();
-                                    resolve(orderItemIds);
+                                    resolve(customerIssueSupportIds);
                                 })["catch"](function (error) {
                                     connection.release();
                                     reject(error);
@@ -107,4 +110,4 @@ function populateOrderItems(productIds, orderIds) {
         });
     });
 }
-exports.populateOrderItems = populateOrderItems;
+exports.populateCustomerIssueSupports = populateCustomerIssueSupports;

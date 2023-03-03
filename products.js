@@ -71,7 +71,8 @@ function populateProducts() {
                                     var product = {
                                         name: faker_1.faker.commerce.productName(),
                                         description: faker_1.faker.commerce.productDescription(),
-                                        price: faker_1.faker.commerce.price()
+                                        price: faker_1.faker.commerce.price(),
+                                        image_path: faker_1.faker.image.technics(undefined, undefined, true)
                                     };
                                     var insertProductQuery = 'INSERT INTO sylius_product SET ?';
                                     var insertProductPromise = new Promise(function (resolve, reject) {

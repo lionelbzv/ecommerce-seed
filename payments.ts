@@ -4,10 +4,10 @@ import { faker } from '@faker-js/faker';
 faker.setLocale('en_US');
 
 /**
- * Populate sylius_product
+ * Populate sylius_payment
  * @returns Promise<string[]>
  */
-export async function populateProducts(): Promise<string[]> {
+export async function populatePayments(orderIds: string[], paymentMethodIds: string[]): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -15,50 +15,53 @@ export async function populateProducts(): Promise<string[]> {
                 return;
             }
 
-            const productIds = new Array<string>();
+            const paymentIds = new Array<string>();
 
-            const deleteQuery = 'DELETE FROM sylius_product';
+            const deleteQuery = 'DELETE FROM sylius_payment';
             connection.query(deleteQuery, (error, results, fields) => {
                 if (error) {
                     reject(error);
                     return;
                 }
 
-                const resetQuery = 'ALTER TABLE sylius_product AUTO_INCREMENT = 1';
+                const resetQuery = 'ALTER TABLE sylius_payment AUTO_INCREMENT = 1';
                 connection.query(resetQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                         return;
                     }
 
-                    const productInsertQueries = new Array<Promise<void>>();
+                    const paymentInsertQueries = new Array<Promise<void>>();
 
+                    const state = ['New', 'Completed'];
                     for (let i = 0; i < 100; i++) {
-                        const product = {
-                            name: faker.commerce.productName(),
-                            description: faker.commerce.productDescription(),
-                            price: faker.commerce.price(),
-                            image_path: faker.image.technics(undefined, undefined, true),
+                        const payment = {
+                            state: faker.helpers.arrayElement(state),
+                            amount: faker.commerce.price(),
+                            currency_code: 'USD',
+                            details: faker.lorem.text(),
+                            method_id: faker.helpers.arrayElement(paymentMethodIds),
+                            order_id: orderIds[i],
                         };
 
-                        const insertProductQuery = 'INSERT INTO sylius_product SET ?';
-                        const insertProductPromise = new Promise<void>((resolve, reject) => {
-                            connection.query(insertProductQuery, product, (error, results, fields) => {
+                        const insertPaymentQuery = 'INSERT INTO sylius_payment SET ?';
+                        const insertPaymentPromise = new Promise<void>((resolve, reject) => {
+                            connection.query(insertPaymentQuery, payment, (error, results, fields) => {
                                 if (error) {
                                     reject(error);
                                     return;
                                 }
-                                productIds.push(results.insertId.toString());
+                                paymentIds.push(results.insertId.toString());
                                 resolve();
                             });
                         });
-                        productInsertQueries.push(insertProductPromise);
+                        paymentInsertQueries.push(insertPaymentPromise);
                     }
 
-                    Promise.all(productInsertQueries)
+                    Promise.all(paymentInsertQueries)
                         .then(() => {
                             connection.release();
-                            resolve(productIds);
+                            resolve(paymentIds);
                         })
                         .catch((error) => {
                             connection.release();

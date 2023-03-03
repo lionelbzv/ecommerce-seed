@@ -45,13 +45,16 @@ var paymentMethods_1 = require("./paymentMethods");
 var shippingMethods_1 = require("./shippingMethods");
 var orders_1 = require("./orders");
 var orderItems_1 = require("./orderItems");
+var payments_1 = require("./payments");
+var shippings_1 = require("./shippings");
+var customerIssues_1 = require("./customerIssues");
+var customerIssueSupports_1 = require("./customerIssueSupports");
 var database_1 = require("./database");
 /**
- * TODO
- * - add image to product
+ * @todo
  */
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var customerIds, addressIds, productIds, taxonIds, paymentMethodIds, shippingMethodIds, orderIds, orderItemIds;
+    var customerIds, addressIds, productIds, taxonIds, paymentMethodIds, shippingMethodIds, orderIds, orderItemIds, paymentIds, shippingIds, customerIssueIds, customerIssueSupportIds;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -91,6 +94,22 @@ var database_1 = require("./database");
                 return [4 /*yield*/, (0, orderItems_1.populateOrderItems)(productIds, orderIds)];
             case 9:
                 orderItemIds = _a.sent();
+                process.stdout.write('.');
+                return [4 /*yield*/, (0, payments_1.populatePayments)(orderIds, paymentMethodIds)];
+            case 10:
+                paymentIds = _a.sent();
+                process.stdout.write('.');
+                return [4 /*yield*/, (0, shippings_1.populateShippings)(orderIds, shippingMethodIds)];
+            case 11:
+                shippingIds = _a.sent();
+                process.stdout.write('.');
+                return [4 /*yield*/, (0, customerIssues_1.populateCustomerIssues)(orderIds)];
+            case 12:
+                customerIssueIds = _a.sent();
+                process.stdout.write('.');
+                return [4 /*yield*/, (0, customerIssueSupports_1.populateCustomerIssueSupports)(customerIssueIds)];
+            case 13:
+                customerIssueSupportIds = _a.sent();
                 process.stdout.write('.');
                 database_1.pool.end(function (err) {
                     if (err)

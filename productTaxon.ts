@@ -35,7 +35,7 @@ export async function populateProductTaxon(productIds: string[], taxonIds: strin
                     for (let i = 0; i < productIds.length; i++) {
                         const productTaxon = {
                             product_id: productIds[i],
-                            taxon_id: taxonIds[Math.floor(Math.random() * taxonIds.length)],
+                            taxon_id: faker.helpers.arrayElement(taxonIds),
                         };
 
                         const insertProductTaxonQuery = 'INSERT INTO sylius_product_taxon SET ?';
